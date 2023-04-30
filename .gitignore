@@ -34,4 +34,7 @@ frontend/.env*.local
 # vercel
 .vercel
 
+#random
 backend/products.json
+.next/
+node_modules/
