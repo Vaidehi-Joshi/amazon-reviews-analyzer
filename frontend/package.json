@@ -1,5 +1,5 @@
 {
-  "name": "Amazon Review Analyzer",
+  "name": "amazon-review-analyzer",
   "version": "0.1.0",
   "private": true,
   "scripts": {
