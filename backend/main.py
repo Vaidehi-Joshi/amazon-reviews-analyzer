@@ -1,7 +1,7 @@
 import json
 import nltk
 import pandas as pd
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 
 from flask_cors import CORS
@@ -58,26 +58,6 @@ def get_reviews_by_product_id(product_id):
     }
 
 
-@app.route('/products/<string:product_id>', methods=['GET'])
-def get_product_reviews(product_id):
-    product_reviews = get_reviews_by_product_id(product_id)
-
-    return jsonify(product_reviews)
-
-
-@app.route('/products', methods=['GET'])
-def get_products():
-    product_df = pd.read_json('products.json', lines=True)
-    output = []
-    products = []
-    for index, row in product_df.iterrows():
-        product = {'product_id': row['asin'], 'summary': row['review_summary']}
-        products.append(product)
-
-    output.append({'category': 'Video Games', 'products': products})
-    return jsonify(output)
-
-
 def generate_review_summary():
     # Group the dataframe by 'asin'
     grouped = df.groupby('asin')
@@ -99,6 +79,51 @@ def generate_review_summary():
         for entry in output_data:
             f.write(json.dumps(entry))
             f.write('\n')
+
+
+@app.route('/products/<string:product_id>', methods=['GET'])
+def get_product_reviews(product_id):
+    product_reviews = get_reviews_by_product_id(product_id)
+
+    return jsonify(product_reviews)
+
+
+@app.route('/products', methods=['GET'])
+def get_products():
+    product_df = pd.read_json('products.json', lines=True)
+    output = []
+    products = []
+    for index, row in product_df.iterrows():
+        product = {'product_id': row['asin'], 'summary': row['review_summary']}
+        products.append(product)
+
+    output.append({'category': 'Video Games', 'products': products})
+    return jsonify(output)
+
+
+@app.route('/add_review', methods=['POST'])
+def add_review():
+    # Get review data from POST request
+    print(request.json)
+    review_data = request.json
+
+    review = {'reviewText': review_data['review_text'], 'asin': review_data['product_id'], 'reviewerName': review_data['reviewer_name']}
+    product = {'asin': review_data['product_id'], 'review_summary': get_summary(review_data['review_text'])}
+
+    review_df = pd.read_json('Appliances_5.json', lines=True)
+    product_df = pd.read_json('products.json', lines=True)
+
+    review_df_ = pd.DataFrame([review])
+    review_df = pd.concat([review_df, review_df_], ignore_index=True)
+
+    product_df_ = pd.DataFrame([product])
+    product_df = pd.concat([product_df, product_df_], ignore_index=True)
+
+    print("DOne")
+    review_df.to_json('Appliances_5.json', orient='records', lines=True)
+    product_df.to_json('products.json',  orient='records', lines=True)
+
+    return jsonify({'message': 'Review added successfully'})
 
 
 # def _build_cors_preflight_response():
