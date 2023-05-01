@@ -3,6 +3,7 @@ import nltk
 import pandas as pd
 from flask import Flask, jsonify, request
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
+from transformers import pipeline
 import datetime
 
 from flask_cors import CORS
@@ -15,6 +16,11 @@ from flask_cors import CORS
 nltk.download('vader_lexicon')
 # Load the VADER model
 sid = SentimentIntensityAnalyzer()
+
+#Load custom fine-tuned summarization model
+hub_model_id = "jovianjaison/mt5-small-finetuned-amazon-en-es"
+summarizer = pipeline("summarization", model=hub_model_id)
+
 app = Flask(__name__)
 CORS(app) # This will enable CORS for all routes
 
@@ -33,10 +39,9 @@ def get_sentiment(text):
 
 
 def get_summary(text):
-    # keywords = kw_model.extract_keywords(text, keyphrase_ngram_range=(1, 3), stop_words='english', highlight=False, top_n=5)
-    # keywords_list = list(dict(keywords).keys())
-    # return keywords_list
-    return []
+    #Get abstract summary
+    summary = summarizer(text)[0]["summary_text"]
+    return [summary]
 
 
 def get_reviews_by_product_id(product_id):
@@ -87,7 +92,6 @@ def generate_review_summary():
 
 @app.route('/products/<string:product_id>', methods=['GET'])
 def get_product_reviews(product_id):
-
     product_reviews = get_reviews_by_product_id(product_id)
 
     return jsonify(product_reviews)
