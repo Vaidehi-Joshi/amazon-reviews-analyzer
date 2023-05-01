@@ -3,6 +3,7 @@ import nltk
 import pandas as pd
 from flask import Flask, jsonify, request
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
+import datetime
 
 from flask_cors import CORS
 
@@ -18,7 +19,7 @@ app = Flask(__name__)
 CORS(app) # This will enable CORS for all routes
 
 # df = pd.read_json('Video_Games.json', lines=True)
-df = pd.read_json('Appliances_5.json', lines=True)
+# df = pd.read_json('Appliances_5.json', lines=True)
 
 
 def get_sentiment(text):
@@ -39,8 +40,10 @@ def get_summary(text):
 
 
 def get_reviews_by_product_id(product_id):
+    df = pd.read_json('Appliances_5.json', lines=True)
     reviews = []
-    filtered_df = df[df['asin'] == product_id]
+    filtered_df = df[df['asin'] == product_id].sort_values(by=['reviewTime'])
+
     for index, row in filtered_df.iterrows():
         review = {'review_id': index, 'reviewer_name': row['reviewerName'], 'review_text': row['reviewText'],
                   'sentiment': get_sentiment(row['reviewText'])}
@@ -59,6 +62,7 @@ def get_reviews_by_product_id(product_id):
 
 
 def generate_review_summary():
+    df = pd.read_json('Appliances_5.json', lines=True)
     # Group the dataframe by 'asin'
     grouped = df.groupby('asin')
     print(grouped.head())
@@ -83,6 +87,7 @@ def generate_review_summary():
 
 @app.route('/products/<string:product_id>', methods=['GET'])
 def get_product_reviews(product_id):
+
     product_reviews = get_reviews_by_product_id(product_id)
 
     return jsonify(product_reviews)
@@ -103,11 +108,12 @@ def get_products():
 
 @app.route('/add_review', methods=['POST'])
 def add_review():
+    reviewTime=str(datetime.datetime.now().strftime("%m %d, %Y"))
     # Get review data from POST request
     print(request.json)
     review_data = request.json
 
-    review = {'reviewText': review_data['review_text'], 'asin': review_data['product_id'], 'reviewerName': review_data['reviewer_name']}
+    review = {'reviewText': review_data['review_text'], 'asin': review_data['product_id'], 'reviewerName': review_data['reviewer_name'],'reviewTime':reviewTime}
     product = {'asin': review_data['product_id'], 'review_summary': get_summary(review_data['review_text'])}
 
     review_df = pd.read_json('Appliances_5.json', lines=True)

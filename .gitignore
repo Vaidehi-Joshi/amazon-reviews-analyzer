@@ -38,3 +38,4 @@ frontend/.env*.local
 backend/products.json
 .next/
 node_modules/
+products.json

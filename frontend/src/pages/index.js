@@ -9,25 +9,25 @@ const URL = "http://localhost:5000"
 
 export default function Home() {
 
-  const [data, setData] = useState(null)
+  const [data, setData] = useState(null);
   const [productId, setProductId] = useState(null);
-  const [productData, setProductData] = useState(null)
+  const [productData, setProductData] = useState(null);
   const [reviewMode, setReviewMode] = useState(false);
+  const [reviewText, setReviewText] = useState("");
 
   const getProducts = () => {
-      return fetch(URL + "/products")
-        .then(data => data.json())
+          fetch(URL + "/products/" + productId)
+                    .then(data => {
+                        return data.json()
+                    })
+                    .then(data => {
+                        setProductData(data)
+                    })
   }
 
   useEffect(()=> {
     if (productId !== null) {
-      fetch(URL + "/products/" + productId)
-                .then(data => {
-                    return data.json()
-                })
-                .then(data => {
-                    setProductData(data)
-                })
+      getProducts()
     }
 
   }, productId)
@@ -52,87 +52,122 @@ export default function Home() {
 //      }
 //    ])
 
-    setProductData({
-      product_id: 1,
-      summary: 'Okay machine',
-      reviews: [
-        {
-          review_id: '1',
-          reviewer_name: 'Anand Joshi',
-          review_text: 'What a washing machine aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
-          sentiment: 'Good'
-        },
-        {
-          review_id: '2',
-          reviewer_name: 'Ramesh',
-          review_text: 'What a washing machine',
-          sentiment: 'Bad'
-        },
-        {
-          review_id: '3',
-          reviewer_name: 'Ramesh',
-          review_text: 'What a washing machine',
-          sentiment: 'Neutral'
-        },
-        {
-          review_id: '1',
-          reviewer_name: 'Anand Joshi',
-          review_text: 'What a washing machine aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
-          sentiment: 'Good'
-        },
-        {
-          review_id: '2',
-          reviewer_name: 'Ramesh',
-          review_text: 'What a washing machine',
-          sentiment: 'Bad'
-        },
-        {
-          review_id: '3',
-          reviewer_name: 'Ramesh',
-          review_text: 'What a washing machine',
-          sentiment: 'Neutral'
-        },
-        {
-          review_id: '3',
-          reviewer_name: 'Ramesh',
-          review_text: 'What a washing machine',
-          sentiment: 'Neutral'
-        },
-        {
-          review_id: '1',
-          reviewer_name: 'Anand Joshi',
-          review_text: 'What a washing machine aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
-          sentiment: 'Good'
-        },
-        {
-          review_id: '2',
-          reviewer_name: 'Ramesh',
-          review_text: 'What a washing machine',
-          sentiment: 'Bad'
-        },
-        {
-          review_id: '3',
-          reviewer_name: 'Ramesh',
-          review_text: 'What a washing machine',
-          sentiment: 'Neutral'
-        },
-
-
-
-      ]
-    })
+//    setProductData({
+//      product_id: 1,
+//      summary: 'Okay machine',
+//      reviews: [
+//        {
+//          review_id: '1',
+//          reviewer_name: 'Anand Joshi',
+//          review_text: 'What a washing machine aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
+//          sentiment: 'Good'
+//        },
+//        {
+//          review_id: '2',
+//          reviewer_name: 'Ramesh',
+//          review_text: 'What a washing machine',
+//          sentiment: 'Bad'
+//        },
+//        {
+//          review_id: '3',
+//          reviewer_name: 'Ramesh',
+//          review_text: 'What a washing machine',
+//          sentiment: 'Neutral'
+//        },
+//        {
+//          review_id: '1',
+//          reviewer_name: 'Anand Joshi',
+//          review_text: 'What a washing machine aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
+//          sentiment: 'Good'
+//        },
+//        {
+//          review_id: '2',
+//          reviewer_name: 'Ramesh',
+//          review_text: 'What a washing machine',
+//          sentiment: 'Bad'
+//        },
+//        {
+//          review_id: '3',
+//          reviewer_name: 'Ramesh',
+//          review_text: 'What a washing machine',
+//          sentiment: 'Neutral'
+//        },
+//        {
+//          review_id: '3',
+//          reviewer_name: 'Ramesh',
+//          review_text: 'What a washing machine',
+//          sentiment: 'Neutral'
+//        },
+//        {
+//          review_id: '1',
+//          reviewer_name: 'Anand Joshi',
+//          review_text: 'What a washing machine aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
+//          sentiment: 'Good'
+//        },
+//        {
+//          review_id: '2',
+//          reviewer_name: 'Ramesh',
+//          review_text: 'What a washing machine',
+//          sentiment: 'Bad'
+//        },
+//        {
+//          review_id: '3',
+//          reviewer_name: 'Ramesh',
+//          review_text: 'What a washing machine',
+//          sentiment: 'Neutral'
+//        },
+//
+//
+//
+//      ]
+//    })
 
   }, [])
 
-  const openNotification = () => {
-    notification.open({
-      message: 'Notification Title',
-      description:
-        'This is the content of the notification. This is the content of the notification. This is the content of the notification.',
-      onClick: () => {
-        console.log('Notification Clicked!');
-      },
-    });
+  const addReview = () => {
+      var myHeaders = new Headers();
+      myHeaders.append("Content-Type", "application/json");
+
+
+      var raw = JSON.stringify({
+        "product_id": "A37DQO5LU8DXTV",
+        "reviewer_name": "Anand Joshi",
+        "review_text": "What a washing machine"
+      });
+
+      var requestOptions = {
+        method: 'POST',
+        headers: myHeaders,
+        body: JSON.stringify({
+            "product_id":productId,
+            "reviewer_name":'Anonymous',
+            "review_text": reviewText
+        }),
+        redirect: 'follow'
+      };
+
+      fetch("http://localhost:5000/add_review", requestOptions)
+        .then(response => {
+            if(response.status==200){
+                openNotification();
+                setReviewText("");
+                setReviewMode(false);
+                getProducts();
+            }
+        })
+        .then(result => console.log(result))
+        .catch(error => console.log('error', error));
+      }
+
+      const openNotification = () => {
+        notification.open({
+          message: 'Review Added',
+          description:
+            'Your review for product'+productId+' has been added',
+          onClick: () => {
+            console.log('Submitted!');
+          },
+        });
   };
 
   return (
@@ -198,12 +233,12 @@ export default function Home() {
                   }}>+ Add Review</div>
                   :
                   <>
-                    <textarea style={{backgroundColor: 'black'}} className='w-full m-2 rounded-sm' placeholder='Enter your review'></textarea>
+                    <textarea style={{backgroundColor: 'black'}} value={reviewText} onChange={e => setReviewText(e.target.value)} className='w-full m-2 rounded-sm' placeholder='Enter your review'></textarea>
                     <div className='flex flex-col'>
                       <Button className='rounded-lg mb-1' type="dashed" onClick={() => setReviewMode(false)}>
                         Cancel 
                       </Button>
-                      <Button className='rounded-lg' type="default" loading={false} onClick={() => alert('submit')}>
+                      <Button className='rounded-lg' type="default" loading={false} onClick={() => addReview()}>
                         Submit
                       </Button>
                     </div>
