@@ -40,7 +40,8 @@ def get_sentiment(text):
 
 def get_summary(text):
     #Get abstract summary
-    summary = summarizer(text)[0]["summary_text"]
+    summary = summarizer(text[0:511])[0]["summary_text"]
+    print(summary)
     return [summary]
 
 
