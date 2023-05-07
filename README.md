@@ -11,7 +11,7 @@ This repository is the best combination of Next.js, Ant Design, Less, and Tailwi
 
 1. Clone this repository
 
-        $ git clone https://github.com/lordriyan/nextjs-antd-less-tailwindcss-boilerplate.git
+        $ git clone https://github.com/vaidehi-joshi/amazon-reviews-analyzer.git
 
 2. Install all dependecies
 
