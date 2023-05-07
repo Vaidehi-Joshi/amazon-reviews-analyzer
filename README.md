@@ -1,6 +1,6 @@
-# Next.js + Ant Design + Less + Tailwind CSS Boilerplate
+# Next.js + Ant Design + Less + Tailwind CSS 
 
-This repository is the best combination of Next.js, Ant Design, Less, and Tailwind CSS to start building web applications.
+This repository is the best combination of Next.js, Ant Design, Less, and Tailwind CSS 
 
 ## Requirements
 
